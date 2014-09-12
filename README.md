@@ -1,6 +1,13 @@
-# NewrelicLoggerExtension
+# Newrelic Logger Extension
 
-TODO: Write a gem description
+patch a logger instance to send a specified servity level as custom metric to
+newrelic. The original logger handling is kept unchanged.
+
+The login message is not send to newrelic only the location where the logging
+happend is sent.
+
+Also keep in mind that newrelic as a limit of ~2000 custom metrics which means
+if you have to many locations where logging happend this might become an issue.
 
 ## Installation
 
@@ -12,13 +19,19 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install newrelic_logger_extension
-
 ## Usage
 
-TODO: Write usage instructions here
+to use this in for example an Rails application, first make sure newrelic is
+setup and then create a new initilizer like this
+
+``` ruby
+%w(info warn error).each do |level|
+  NewrelicLoggerExtension.inject_logger(Rails.logger, level)\
+end
+```
+
+This will add the newrelic custom metric logging to the servity level `info`,
+`warn` and `error`.
 
 ## Contributing
 
