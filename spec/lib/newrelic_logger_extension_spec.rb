@@ -28,7 +28,7 @@ describe NewrelicLoggerExtension do
   it 'should call correctly set the custom metric nameing' do
     expect(::NewRelic::Agent)
       .to receive(:increment_metric)
-         .with('Custom/Warn/spec__lib__newrelic_logger_extension_spec__32')
-    logger.warn('test warning') # this is line 32
+         .with('Custom/Warn/RSpec::ExampleGroups::NewrelicLoggerExtension')
+    logger.warn('test warning')
   end
 end
