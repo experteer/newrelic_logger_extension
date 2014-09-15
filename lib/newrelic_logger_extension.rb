@@ -1,4 +1,5 @@
 require 'newrelic_logger_extension/version'
+require 'binding_of_caller'
 # require 'newrelic_rpm'
 
 module NewrelicLoggerExtension
@@ -12,7 +13,7 @@ module NewrelicLoggerExtension
     logger.singleton_class.class_eval do
       define_method("#{level}_with_newrelic") do |*args|
         send("#{level}_without_newrelic", *args)
-        log_to_newrelic("#{level.capitalize}", caller_locations(1).first)
+        log_to_newrelic level.capitalize, binding.of_caller(1).eval('self')
       end
 
       alias_method "#{level}_without_newrelic", level
@@ -21,14 +22,9 @@ module NewrelicLoggerExtension
   end
   def self.inject_shared_methods(logger)
     logger.singleton_class.class_eval do
-      def log_to_newrelic(category, kaller)
-        ::NewRelic::Agent.increment_metric("Custom/#{category}/#{format_caller(kaller)}")
-      end
-
-      def format_caller(kaller)
-        (kaller.path.split(/\/|\./)[-4..-2] << kaller.lineno).join(SEPARATOR)
-      rescue
-        File.basename(kaller.path)
+      def log_to_newrelic(category, caller_class)
+        caller_class = caller_class.class unless caller_class.class.to_s == 'Class'
+        ::NewRelic::Agent.increment_metric("Custom/#{category}/#{caller_class}")
       end
     end
   end

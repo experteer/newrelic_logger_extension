@@ -22,6 +22,7 @@ EOS
   spec.require_paths = ['lib']
 
   spec.add_dependency 'newrelic_rpm', '>= 3.9'
+  spec.add_dependency 'binding_of_caller', '>= 0.7'
 
   spec.add_development_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake'
